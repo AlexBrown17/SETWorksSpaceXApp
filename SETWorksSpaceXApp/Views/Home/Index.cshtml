@@ -5,39 +5,32 @@
 <div class="placeholders">
     <div class="row d-flex justify-content-start">
         <div class="col-md-2 mb-3 placeholder">
-            <img class="img-fluid " alt="1024x1024 rocket" src="~/Images/rocket.jpg">
+            <img class="img-fluid " alt="1024 pixel by 1024 pixel rocket" src="~/Images/rocket.jpg">
         </div>
         <div class="col-md-3">
-            <h2>Lorem ipsum dolor sit amet...</h2>
+            <h2>The Latest and Greatest SpaceX Launch Data</h2>
+            <h2>&nbsp;</h2>
             <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                galley of type and scrambled it to make a type specimen book.
-            </p>
-            <p>
-                <button class="textButton k-primary">Primary Button</button>
+                Since mankind was a baby, mankind has dreamt of space travel. Today, we live the dream!
             </p>
         </div>
         <div class="col-md-3">
             <h2>&nbsp;</h2>
             <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                galley of type and scrambled it to make a type specimen book.
-            </p>
-            <p>
-                <button class="textButton">Button</button>
+                &emsp;This web application brings together data from both the SpaceX Launches and Payloads APIs to bring you different information about each SpaceX launch.
+                By using the array of payload IDs from each launch, it is possible to calculate the total payload mass of each launch, and in turn, rank each launch by its mass.
+                Repeated rank values represent multiple payloads with the same recorded payload mass.
             </p>
         </div>
         <div class="col-md-3">
             <h2>&nbsp;</h2>
             <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                galley of type and scrambled it to make a type specimen book.
+                &emsp;Hi! My name is Alex, and I'm the developer of this web application.
+                I love to code, and I don't want to stop learning new methods and tricks as I continue to build applications.
+                To learn more, visit my LinkedIn profile!
             </p>
             <p>
-                <button class="textButton">Button</button>
+                <a href="https://www.linkedin.com/in/alexander-brown-864741141/" target="_blank"><button class="textButton k-primary">LinkedIn</button></a>
             </p>
         </div>
     </div>
@@ -100,9 +93,6 @@
                 console.log('Name: ' + launch.name + ', Successful?: ' + launch.success);
             })
 
-
-
-
             $("#grid").kendoGrid({
                 height: 550,
                 sortable: {
@@ -129,12 +119,6 @@
                         filterable: false,
                         sortable: false,
                     },
-                    @* {
-                        field: "payloads",
-                        title: "Payload ID",
-                        filterable: false,
-                        sortable: false,
-                    },*@
                     {
                         field: "payloadRank",
                         title: "Mass, Ranked",
@@ -142,8 +126,6 @@
                         sortable: false,
                     },
                 ],
-                //dataSource
-                //dataSource: dataLaunches,
                 dataSource: new kendo.data.DataSource({
                     data: dataLaunches,
                     pageSize: 50,
@@ -160,9 +142,6 @@
                     sort: { field: "date_utc", dir: "desc" }
                 })
             });
-
-
-
         }
 
         getLaunchJSON();
@@ -195,14 +174,14 @@
         to calculate the total mass as an aggregate to determine the rank of each launch's payload mass,
         similar to joining the tables on the condition launches.payloads == payloads.id and using a SUM function on the payloads in SQL.
         However this does not rank the values, but it would get me closer to that goal*/
-        var payloads = new kendo.data.DataSource({
+        @*var payloads = new kendo.data.DataSource({
             transport: {
                 read: {
                     url: "https://api.spacexdata.com/v4/payloads",
                     dataType: "json"
                 }
             },
-            //pageSize: 20,
+            pageSize: 20,
             schema: {
                 model: {
                     fields: {
@@ -211,7 +190,7 @@
                     },
                 },
             },
-        });
+        });*@
 
         $(".textButton").kendoButton();
     });
