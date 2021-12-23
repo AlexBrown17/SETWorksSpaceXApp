@@ -1,0 +1,218 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="placeholders">
+    <div class="row d-flex justify-content-start">
+        <div class="col-md-2 mb-3 placeholder">
+            <img class="img-fluid " alt="1024x1024 rocket" src="~/Images/rocket.jpg">
+        </div>
+        <div class="col-md-3">
+            <h2>Lorem ipsum dolor sit amet...</h2>
+            <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+                galley of type and scrambled it to make a type specimen book.
+            </p>
+            <p>
+                <button class="textButton k-primary">Primary Button</button>
+            </p>
+        </div>
+        <div class="col-md-3">
+            <h2>&nbsp;</h2>
+            <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+                galley of type and scrambled it to make a type specimen book.
+            </p>
+            <p>
+                <button class="textButton">Button</button>
+            </p>
+        </div>
+        <div class="col-md-3">
+            <h2>&nbsp;</h2>
+            <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+                galley of type and scrambled it to make a type specimen book.
+            </p>
+            <p>
+                <button class="textButton">Button</button>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div id="grid"></div>     
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        const launches_url = "https://api.spacexdata.com/v4/launches";
+        const payloads_url = "https://api.spacexdata.com/v4/payloads";
+        async function getLaunchJSON() {
+            const responseLaunches = await fetch(launches_url);
+            const dataLaunches = await responseLaunches.json();
+
+            const responsePayloads = await fetch(payloads_url);
+            const dataPayloads = await responsePayloads.json();
+
+            //iterate through each launch
+            dataLaunches.forEach(launch => {
+                var totalMass = 0;
+
+                //iterate through payload array in each launch
+                launch.payloads.forEach(payloadID => {
+
+                    /*inner loop to compare this payload id from launches to id values
+                    from payloads to effectively get the mass of each payload in each launch*/
+                    dataPayloads.forEach(payload => {
+                        if (payloadID == payload.id) { totalMass += payload.mass_lbs };
+                    })
+                })
+
+                //add total payload mass key/value to launch information
+                launch.payloadMass = totalMass;
+            });
+
+            var i = 0;
+            dataLaunches.forEach(launch => {
+                let currentMass = launch.payloadMass;
+                //initial rank
+                launch.payloadRank = 1;
+                //loop to compare current mass to every mass and reassign rank accordingly
+                dataLaunches.forEach(innerLaunch => {
+                    if (innerLaunch.payloadMass > currentMass) {
+                        launch.payloadRank += 1;
+                    }
+                })
+            })
+
+            //rewrite success value for user
+            dataLaunches.forEach(launch => {
+                if (launch.success == null) { launch.success = 'Unknown'; }
+                else if (launch.success) { launch.success = 'Successful'; }
+                else if (!launch.success) { launch.success = 'Failure'; }
+                console.log('Name: ' + launch.name + ', Successful?: ' + launch.success);
+            })
+
+
+
+
+            $("#grid").kendoGrid({
+                height: 550,
+                sortable: {
+                    initialDirection: "desc",
+                },
+                pageable: true,
+                columns: [
+                    {
+                        field: "name",
+                        title: "Flight Name:",
+                        filterable: false,
+                        sortable: false,
+                    },
+                    {
+                        field: "date_utc",
+                        title: "Date & Local Time:",
+                        filterable: false,
+                        //because data type is 'date', the date/time is automatically converted to your local date/time
+                        format: "{0: MMM dd yyyy hh:mm tt}"
+                    },
+                    {
+                        field: "success",
+                        title: "Launch Status",
+                        filterable: false,
+                        sortable: false,
+                    },
+                    @* {
+                        field: "payloads",
+                        title: "Payload ID",
+                        filterable: false,
+                        sortable: false,
+                    },*@
+                    {
+                        field: "payloadRank",
+                        title: "Mass, Ranked",
+                        filterable: false,
+                        sortable: false,
+                    },
+                ],
+                //dataSource
+                //dataSource: dataLaunches,
+                dataSource: new kendo.data.DataSource({
+                    data: dataLaunches,
+                    pageSize: 50,
+                    schema: {
+                        model: {
+                            fields: {
+                                name: { type: "String" },
+                                date_utc: { type: "date" },
+                                success: { type: "String" },
+                                payloadRank: { type: "String" },
+                            },
+                        },
+                    },
+                    sort: { field: "date_utc", dir: "desc" }
+                })
+            });
+
+
+
+        }
+
+        getLaunchJSON();
+
+        // all spacex launches, each launch includes an array of payloads titled "payload"
+        // key: value --> "payload": ["id", ...]
+        var launches = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "https://api.spacexdata.com/v4/launches",
+                    dataType: "json"
+                },
+            },
+            pageSize: 50,
+            schema: {
+                model: {
+                    fields: {
+                        name: { type: "String" },
+                        date_utc: { type: "date" },
+                        success: { type: "Boolean" },
+                        payloads: { type: "String" },
+                    },
+                },
+            },
+            sort: { field: "date_utc", dir: "desc" }
+        });
+
+        // all spacex payloads with "id" key to link to respective launch
+        /* I originally wanted to combine this payload mass/id data with the launches data to link to each payload array in 'launches'
+        to calculate the total mass as an aggregate to determine the rank of each launch's payload mass,
+        similar to joining the tables on the condition launches.payloads == payloads.id and using a SUM function on the payloads in SQL.
+        However this does not rank the values, but it would get me closer to that goal*/
+        var payloads = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "https://api.spacexdata.com/v4/payloads",
+                    dataType: "json"
+                }
+            },
+            //pageSize: 20,
+            schema: {
+                model: {
+                    fields: {
+                        id: { type: "string" },
+                        mass_lbs: { type: "number" },
+                    },
+                },
+            },
+        });
+
+        $(".textButton").kendoButton();
+    });
+</script>

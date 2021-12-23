@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SETWorksSpaceXApp", "SETWorksSpaceXApp\SETWorksSpaceXApp.csproj", "{BDA29535-9679-4C75-AF00-F0B470E90BDE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BDA29535-9679-4C75-AF00-F0B470E90BDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDA29535-9679-4C75-AF00-F0B470E90BDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDA29535-9679-4C75-AF00-F0B470E90BDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDA29535-9679-4C75-AF00-F0B470E90BDE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B422A0A4-EE25-45FC-BCCF-5E6172C36219}
+	EndGlobalSection
+EndGlobal
